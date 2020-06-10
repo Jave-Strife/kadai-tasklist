@@ -5,7 +5,7 @@
         <meta http-equiv="X-UA-Compatible" content="IE=edge">
         <meta name="viewport" content="width=device-width, initial-scale=1">
 
-        <title>Laravel</title>
+        <title>TaskList</title>
 
         <!-- Fonts -->
         <link href="https://fonts.googleapis.com/css?family=Raleway:100,600" rel="stylesheet" type="text/css">
@@ -65,31 +65,43 @@
         </style>
     </head>
     <body>
-        <div class="flex-center position-ref full-height">
-            @if (Route::has('login'))
-                <div class="top-right links">
-                    @auth
-                        <a href="{{ url('/home') }}">Home</a>
-                    @else
-                        <a href="{{ route('login') }}">Login</a>
-                        <a href="{{ route('register') }}">Register</a>
-                    @endauth
+        @extends('layouts.app')
+
+        @section('content')
+            @if( Auth::check() )
+
+                <h1>タスク一覧</h1>
+                @if( count( $tasks ) > 0 )
+                    <table class="table table-striped">
+                        <thead>
+                            <tr>
+                                <th>ステータス</th>
+                                <th>タスク</th>
+                                <th>登録日時</th>
+                                <th>更新日時</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            @foreach ( $tasks as $task )
+                                <tr>
+                                    <td>{{ $task->status }}</td>
+                                    <td>{!! link_to_route('tasks.show', $task->content, ['id' => $task->id]) !!}</td>
+                                    <td>{{ $task->created_at }}</td>
+                                    <td>{{ $task->updated_at }}</td>
+                                </tr>
+                            @endforeach
+                        </tbody>
+                    </table>
+                @endif
+                {!! link_to_route('tasks.create', '新規タスクの追加', [], ['class' => 'btn btn-primary']) !!}
+            @else
+                <div class="center jumbotron">
+                    <div class="text-center">
+                        <h1>Welcome to the TaskList</h1>
+                        {!! link_to_route('signup.get', 'Sign up now!', [], ['class' => 'btn btn-lg btn-primary']) !!}
+                    </div>
                 </div>
             @endif
-
-            <div class="content">
-                <div class="title m-b-md">
-                    Laravel
-                </div>
-
-                <div class="links">
-                    <a href="https://laravel.com/docs">Documentation</a>
-                    <a href="https://laracasts.com">Laracasts</a>
-                    <a href="https://laravel-news.com">News</a>
-                    <a href="https://forge.laravel.com">Forge</a>
-                    <a href="https://github.com/laravel/laravel">GitHub</a>
-                </div>
-            </div>
-        </div>
+        @endsection
     </body>
 </html>
